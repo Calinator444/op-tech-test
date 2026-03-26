@@ -1,0 +1,25 @@
+# Dependencies
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+backend/*/bin/
+backend/*/obj/
+
+# SQLite database
+backend/**/*.db
+backend/**/*.db-shm
+backend/**/*.db-wal
+
+# .NET
+*.user
+*.suo
+.vs/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
