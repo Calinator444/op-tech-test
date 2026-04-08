@@ -18,6 +18,7 @@ export function StakeholderTable({ stakeholders }: Props) {
           <th>Email</th>
           <th>Role</th>
           <th>Organisation</th>
+          <th>Title</th>
         </tr>
       </thead>
       <tbody>
@@ -28,6 +29,7 @@ export function StakeholderTable({ stakeholders }: Props) {
             <td>{s.email}</td>
             <td>{s.organisation}</td>
             <td>{s.role}</td>
+            <td>{s.title || "-"}</td>
           </tr>
         ))}
       </tbody>
