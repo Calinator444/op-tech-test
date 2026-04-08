@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using StakeholderApi.Models;
 using StakeholderApi.Services;
 
 namespace StakeholderApi.Controllers;
@@ -12,6 +13,20 @@ public class StakeholdersController : ControllerBase
     public StakeholdersController(IStakeholderService stakeholderService)
     {
         _stakeholderService = stakeholderService;
+    }
+
+
+    [HttpPost]
+    [Route("add")]
+    public async Task<IActionResult> Create(Stakeholder stakeholder)
+    {
+        var result = await _stakeholderService.AddStakeholderAsync(stakeholder);
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Errors.First());
+        }
+        
+        return Created(result.Value.Id.ToString(), result.Value);
     }
 
     [HttpGet]

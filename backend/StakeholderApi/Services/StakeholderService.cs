@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StakeholderApi.Data;
 using StakeholderApi.Models;
+using Ardalis.Result;
 
 namespace StakeholderApi.Services;
 
@@ -18,5 +19,18 @@ public class StakeholderService : IStakeholderService
         return await _context.Stakeholders
             .OrderBy(s => s.LastName)
             .ToListAsync();
+}
+
+    public async Task<Result<Stakeholder>> AddStakeholderAsync(Stakeholder stakeholder)
+    {
+        var stakeholderExists = await _context.Stakeholders.AnyAsync(s => s.Email == stakeholder.Email);
+
+        if (stakeholderExists)
+        {
+            return Result.Error("A stakeholder with that email already exists.");
+        }
+        var result= _context.Stakeholders.Add(stakeholder);
+        await _context.SaveChangesAsync();
+        return Result.Success(result.Entity);
     }
 }
