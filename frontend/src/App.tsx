@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { StakeholdersPage } from './pages/StakeholdersPage';
 import './App.css';
+import StakeholdersForm from './pages/NewStakeholderPage';
+import NewStakeholdersPage from './pages/NewStakeholderPage';
 
 function App() {
   return (
@@ -14,6 +16,7 @@ function App() {
       <main className="main-content">
         <Routes>
           <Route path="/" element={<StakeholdersPage />} />
+          <Route path="/stakeholders/new" element={<NewStakeholdersPage />} />
         </Routes>
       </main>
     </BrowserRouter>
