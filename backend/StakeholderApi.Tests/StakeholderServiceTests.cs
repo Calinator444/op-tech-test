@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
 using StakeholderApi.Data;
 using StakeholderApi.Models;
@@ -130,5 +131,61 @@ public class StakeholderServiceTests
         Assert.Equal("Investor", result.Role);
         Assert.Equal("VCP", result.Organisation);
         Assert.Equal(createdAt, result.CreatedAt);
+    }
+
+    [Fact]
+    public async Task AddStakeholderAsync_PersistsToDatabase()
+    {
+        // Arrange
+        using var context = CreateInMemoryContext(nameof(AddStakeholderAsync_PersistsToDatabase));
+        var service = new StakeholderService(context);
+        var stakeholder = new Stakeholder
+        {
+            FirstName = "Alice",
+            LastName = "Johnson",
+            Email = "alice@example.com",
+            Role = "Investor",
+            Organisation = "VCP",
+            CreatedAt = DateTime.UtcNow
+        };
+
+        // Act
+        await service.AddStakeholderAsync(stakeholder);
+        var result  = await context.Stakeholders.FirstAsync(s => s.Email == "alice@example.com");
+        
+
+        // Assert
+        Assert.Equal(stakeholder.FirstName, result.FirstName);
+        Assert.Equal(stakeholder.LastName, result.LastName);
+        Assert.Equal(stakeholder.Email, result.Email);
+        Assert.Equal(stakeholder.Role, result.Role);
+        Assert.Equal(stakeholder.Organisation, result.Organisation);
+        Assert.Equal(stakeholder.CreatedAt, result.CreatedAt);
+    }
+
+    [Fact]
+    public async Task AddStakeholderAsync_WithExistingEmail_ReturnsError()
+    {
+        // Arrange
+        using var  context = CreateInMemoryContext(nameof(AddStakeholderAsync_WithExistingEmail_ReturnsError));
+        var service = new StakeholderService(context);
+        var stakeholder = new Stakeholder
+        {
+            FirstName = "Alice",
+            LastName = "Johnson",
+            Email = "alice@example.com",
+            Role = "Investor",
+            Organisation = "VCP",
+            CreatedAt = DateTime.UtcNow
+        };
+        
+        context.Stakeholders.Add(stakeholder);
+        await context.SaveChangesAsync();
+        
+        // Act 
+        var result = await service.AddStakeholderAsync(stakeholder);
+        
+        // Assert
+        Assert.True(result.IsError());
     }
 }
