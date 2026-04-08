@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using StakeholderApi.Data;
 using StakeholderApi.Models;
 using StakeholderApi.Services;
+using Xunit;
 
 namespace StakeholderApi.Tests;
 
@@ -34,6 +35,32 @@ public class StakeholderServiceTests
 
         // Assert
         Assert.Equal(2, result.Count());
+    }
+
+    [Fact]
+    public async Task GetAllStakeholdersAsync_WithNoTitle_ReturnsNullTitle()
+    {
+        // Arrange
+        using var context = CreateInMemoryContext(nameof(GetAllStakeholdersAsync_WithNoTitle_ReturnsNullTitle));
+        context.Stakeholders.Add(new Stakeholder
+        {
+            Id = 1,
+            FirstName = "Alice",
+            LastName = "Johnson",
+            Email = "alice@example.com",
+            Role = "Investor",
+            Organisation = "VCP",
+            CreatedAt = DateTime.UtcNow,
+        });
+        await context.SaveChangesAsync();
+
+        var service = new StakeholderService(context);
+
+        // Act
+        var result = (await service.GetAllStakeholdersAsync()).Single();
+
+        // Assert
+        Assert.Null(result.Title);
     }
 
     [Fact]
