@@ -1,8 +1,8 @@
 import React from 'react';
 import { Stakeholder } from '../types/stakeholder';
-
+import clsx from 'clsx';
 import { useReactTable, getCoreRowModel, createColumnHelper, flexRender, getPaginationRowModel } from '@tanstack/react-table';
-import { ta } from 'zod/v4/locales';
+
 
 interface Props {
   stakeholders: Stakeholder[];
@@ -38,6 +38,8 @@ export function StakeholderTable({ stakeholders }: Props) {
     return <p className="empty-message">No stakeholders found.</p>;
   }
 
+
+
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 5,
@@ -53,6 +55,15 @@ export function StakeholderTable({ stakeholders }: Props) {
     },
     onPaginationChange: setPagination,
   });
+
+  const totalPages = table.getPageCount();
+  const current = pagination.pageIndex;
+  const start = Math.min(
+    Math.max(current - 1, 0),
+    Math.max(totalPages - 3, 0)
+  );
+  const visiblePages = Array.from({ length: Math.min(3, totalPages) }, (_, i) => start + i + 1);
+
 
   return (
     <>
@@ -73,18 +84,39 @@ export function StakeholderTable({ stakeholders }: Props) {
         ))} 
       </tbody>
     </table>
+    <div className='pagination-container'>
 
-    <select value={pagination.pageSize} onChange={(e) => table.setPageSize(Number(e.target.value))}>
-      <option>
-        5
-      </option>
-      <option>
-        10
-      </option>
-      <option>
-        25
-      </option>
-    </select>
+    <div className='pagination-selector'>
+      Page Size:
+      <select className='select' value={pagination.pageSize} onChange={(e) => table.setPageSize(Number(e.target.value))}>
+        <option>
+          5
+        </option>
+        <option>
+          10
+        </option>
+        <option>
+          25
+        </option>
+      </select>
+    </div>
+
+      <div className='pagination'>
+        <button className='pagination-button' onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}>
+          &lt;&lt;
+        </button>
+        {
+          visiblePages.map(page => (
+            <button className={clsx('pagination-button', pagination.pageIndex === page - 1 && "selected" )} key={page} onClick={() => table.setPageIndex(page - 1)} disabled={pagination.pageIndex === page - 1}>
+              {page}
+            </button>
+          ))
+        }     
+        <button className='pagination-button' onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>
+          &gt;&gt;
+        </button>
+      </div>
+    </div>
     </>
   );
 }
