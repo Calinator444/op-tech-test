@@ -1,6 +1,8 @@
+import React from 'react';
 import { Stakeholder } from '../types/stakeholder';
 
-import { useReactTable, getCoreRowModel, createColumnHelper, flexRender } from '@tanstack/react-table';
+import { useReactTable, getCoreRowModel, createColumnHelper, flexRender, getPaginationRowModel } from '@tanstack/react-table';
+import { ta } from 'zod/v4/locales';
 
 interface Props {
   stakeholders: Stakeholder[];
@@ -35,14 +37,25 @@ export function StakeholderTable({ stakeholders }: Props) {
   if (stakeholders.length === 0) {
     return <p className="empty-message">No stakeholders found.</p>;
   }
+
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 5,
+  })
+  
   const table = useReactTable({
     data: stakeholders,
     columns,
     getCoreRowModel: getCoreRowModel(),
-  })
-  
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      pagination,
+    },
+    onPaginationChange: setPagination,
+  });
 
   return (
+    <>
     <table className="stakeholder-table">
       <thead>
         <tr>
@@ -60,5 +73,18 @@ export function StakeholderTable({ stakeholders }: Props) {
         ))} 
       </tbody>
     </table>
+
+    <select value={pagination.pageSize} onChange={(e) => table.setPageSize(Number(e.target.value))}>
+      <option>
+        5
+      </option>
+      <option>
+        10
+      </option>
+      <option>
+        25
+      </option>
+    </select>
+    </>
   );
 }
