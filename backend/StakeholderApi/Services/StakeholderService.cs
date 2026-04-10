@@ -33,4 +33,11 @@ public class StakeholderService : IStakeholderService
         await _context.SaveChangesAsync();
         return Result.Success(result.Entity);
     }
+
+    public async Task<Result> DeleteStakeholderAsync(int id)
+    {
+        _context.Stakeholders.Remove(new Stakeholder { Id = id });
+        await _context.SaveChangesAsync();
+        return Result.Success();
+    }
 }

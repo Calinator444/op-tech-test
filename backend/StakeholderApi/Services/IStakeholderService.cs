@@ -8,4 +8,6 @@ public interface IStakeholderService
     Task<IEnumerable<Stakeholder>> GetAllStakeholdersAsync();
 
     Task<Result<Stakeholder>> AddStakeholderAsync(Stakeholder stakeholder);
+
+    Task<Result> DeleteStakeholderAsync(int id);
 }

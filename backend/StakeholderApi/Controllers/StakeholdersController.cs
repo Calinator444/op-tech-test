@@ -29,6 +29,14 @@ public class StakeholdersController : ControllerBase
         return Created(result.Value.Id.ToString(), result.Value);
     }
 
+    [HttpDelete]
+    [Route("delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _stakeholderService.DeleteStakeholderAsync(id);
+        return NoContent();
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
