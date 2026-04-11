@@ -6,6 +6,7 @@ import { Stakeholder } from '../types/stakeholder';
 const mockStakeholders: Stakeholder[] = [
   {
     id: 1,
+    title: "Mrs",
     firstName: 'Alice',
     lastName: 'Johnson',
     email: 'alice@example.com',
@@ -15,6 +16,7 @@ const mockStakeholders: Stakeholder[] = [
   },
   {
     id: 2,
+    title: "Mr",
     firstName: 'Bob',
     lastName: 'Williams',
     email: 'bob@example.com',
@@ -33,6 +35,8 @@ describe('StakeholderTable', () => {
     expect(screen.getByText('alice@example.com')).toBeInTheDocument();
     expect(screen.getByText('Bob')).toBeInTheDocument();
     expect(screen.getByText('Williams')).toBeInTheDocument();
+    expect(screen.getByText('Mr')).toBeInTheDocument();
+    expect(screen.getByText('Mrs')).toBeInTheDocument();
   });
 
   it('renders the correct column headers', () => {
@@ -43,6 +47,7 @@ describe('StakeholderTable', () => {
     expect(screen.getByText('Email')).toBeInTheDocument();
     expect(screen.getByText('Role')).toBeInTheDocument();
     expect(screen.getByText('Organisation')).toBeInTheDocument();
+    expect(screen.getByText('Title')).toBeInTheDocument();
   });
 
   it('renders a dash for empty title', () => {
