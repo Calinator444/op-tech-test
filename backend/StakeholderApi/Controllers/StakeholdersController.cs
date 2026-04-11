@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using Microsoft.AspNetCore.Mvc;
 using StakeholderApi.Models;
 using StakeholderApi.Services;
@@ -21,9 +22,9 @@ public class StakeholdersController : ControllerBase
     public async Task<IActionResult> Create(Stakeholder stakeholder)
     {
         var result = await _stakeholderService.AddStakeholderAsync(stakeholder);
-        if (!result.IsSuccess)
+        if (result.IsInvalid())
         {
-            return BadRequest(result.Errors.First());
+            return BadRequest(result.ValidationErrors.First());
         }
         
         return Created(result.Value.Id.ToString(), result.Value);
@@ -38,6 +39,7 @@ public class StakeholdersController : ControllerBase
     }
 
     [HttpGet]
+    
     [Route("email-exists")]
     public async Task<IActionResult> EmailExists(string email)
     {

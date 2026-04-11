@@ -18,6 +18,8 @@ public class StakeholderServiceTests
         return new AppDbContext(options);
     }
 
+    #region GetAllStakeholdersAsync
+    
     [Fact]
     public async Task GetAllStakeholdersAsync_ReturnsAllStakeholders()
     {
@@ -77,6 +79,7 @@ public class StakeholderServiceTests
         // Assert
         Assert.Empty(result);
     }
+    
 
     [Fact]
     public async Task GetAllStakeholdersAsync_ReturnsStakeholdersOrderedByLastName()
@@ -132,6 +135,12 @@ public class StakeholderServiceTests
         Assert.Equal("VCP", result.Organisation);
         Assert.Equal(createdAt, result.CreatedAt);
     }
+    
+    #endregion
+
+    #region AddStakeholderAsync
+
+    
 
     [Fact]
     public async Task AddStakeholderAsync_PersistsToDatabase()
@@ -162,6 +171,63 @@ public class StakeholderServiceTests
         Assert.Equal(stakeholder.Organisation, result.Organisation);
         Assert.Equal(stakeholder.CreatedAt, result.CreatedAt);
     }
+
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    
+    public async Task AddStakeholderAsync_WithEmptyEmail_ReturnsError(string emptyString)
+    {
+        // Arrange 
+        using var context = CreateInMemoryContext(nameof(AddStakeholderAsync_WithEmptyEmail_ReturnsError));
+        var createdAt = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+        var service = new StakeholderService(context);
+        
+        // Act
+        var result = await service.AddStakeholderAsync(new Stakeholder
+        {
+            Title = emptyString,
+            FirstName = emptyString,
+            LastName = emptyString,
+            Email = emptyString,
+            Role = emptyString,
+            Organisation =emptyString,
+            CreatedAt = createdAt
+        });
+        
+        // Assert
+        Assert.True(result.IsInvalid());
+        Assert.Equal(6, result.ValidationErrors.Count());
+    }
+    
+    [Fact]
+    public async Task AddStakeholderAsync_WithExistingEmail_ReturnsError()
+    {
+        // Arrange
+        using var  context = CreateInMemoryContext(nameof(AddStakeholderAsync_WithExistingEmail_ReturnsError));
+        var service = new StakeholderService(context);
+        var stakeholder = new Stakeholder
+        {
+            FirstName = "Alice",
+            LastName = "Johnson",
+            Email = "alice@example.com",
+            Role = "Investor",
+            Organisation = "VCP",
+            CreatedAt = DateTime.UtcNow
+        };
+        context.Stakeholders.Add(stakeholder);
+        await context.SaveChangesAsync();
+        
+        // Act 
+        var result = await service.AddStakeholderAsync(stakeholder);
+        
+        // Assert
+        Assert.True(result.IsInvalid());
+    }
+    #endregion
+
+    #region EmailExists
     
     [Fact]
     public async Task EmailExists_ReturnsTrue_WhenEmailExists()
@@ -201,29 +267,5 @@ public class StakeholderServiceTests
         // Assert
         Assert.False(emailExists);
     }
-
-    [Fact]
-    public async Task AddStakeholderAsync_WithExistingEmail_ReturnsError()
-    {
-        // Arrange
-        using var  context = CreateInMemoryContext(nameof(AddStakeholderAsync_WithExistingEmail_ReturnsError));
-        var service = new StakeholderService(context);
-        var stakeholder = new Stakeholder
-        {
-            FirstName = "Alice",
-            LastName = "Johnson",
-            Email = "alice@example.com",
-            Role = "Investor",
-            Organisation = "VCP",
-            CreatedAt = DateTime.UtcNow
-        };
-        context.Stakeholders.Add(stakeholder);
-        await context.SaveChangesAsync();
-        
-        // Act 
-        var result = await service.AddStakeholderAsync(stakeholder);
-        
-        // Assert
-        Assert.True(result.IsError());
-    }
+    #endregion
 }

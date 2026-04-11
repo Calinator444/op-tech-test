@@ -24,11 +24,22 @@ public class StakeholderService : IStakeholderService
     public async Task<Result<Stakeholder>> AddStakeholderAsync(Stakeholder stakeholder)
     {
         var stakeholderExists = await _context.Stakeholders.AnyAsync(s => s.Email == stakeholder.Email);
-
+        
         if (stakeholderExists)
         {
-            return Result.Error("A stakeholder with that email already exists.");
+            return Result.Invalid(new ValidationError("A stakeholder with that email already exists."));
         }
+        StakeholderValidator validator = new StakeholderValidator();
+        
+        var validationResult = validator.Validate(stakeholder);
+
+        if (!validationResult.IsValid)
+        {
+            return Result.Invalid(validationResult
+                .Errors
+                .Select(e => new ValidationError(e.ErrorMessage)));
+        }
+        
         var result= _context.Stakeholders.Add(stakeholder);
         await _context.SaveChangesAsync();
         return Result.Success(result.Entity);
@@ -42,6 +53,7 @@ public class StakeholderService : IStakeholderService
 
     public async Task<Result> DeleteStakeholderAsync(int id)
     {
+        
         _context.Stakeholders.Remove(new Stakeholder { Id = id });
         await _context.SaveChangesAsync();
         return Result.Success();
