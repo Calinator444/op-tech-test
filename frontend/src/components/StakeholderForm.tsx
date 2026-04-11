@@ -2,7 +2,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Stakeholder } from '../types/stakeholder';
 import { FormInput, FormSubmit } from '@/components/Form';
 import { stakeholderSchema } from '@/schemas/stakeholder';
-import { getEmailExists } from '@/services/stakeholderService';
+import { createStakeholder, getEmailExists } from '@/services/stakeholderService';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -17,10 +17,14 @@ const StakeholderForm = () => {
 
   const { errors, isValidating, isSubmitting } = formState;
 
-  const onSubmit: SubmitHandler<Stakeholder> = (data) => {
-    console.log('data', data);
-    toast.success('Stakeholder created successfully!');
-    navigate('/');
+  const onSubmit: SubmitHandler<Stakeholder> = async (data) => {
+    try{
+      await createStakeholder(data);
+      toast.success('Stakeholder created successfully!');
+      navigate('/');
+    } catch (error) {
+      toast.error('Failed to create stakeholder');
+    }
   };
 
   return (

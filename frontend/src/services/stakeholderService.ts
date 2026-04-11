@@ -28,3 +28,17 @@ export async function getEmailExists(email: string): Promise<boolean> {
 
   return z.boolean().parse(data);
 }
+
+export async function createStakeholder(stakeholder: Omit<Stakeholder, 'id'>): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/stakeholders/add`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(stakeholder),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to create stakeholder');
+  }
+}
