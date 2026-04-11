@@ -11,6 +11,7 @@ function App() {
         <span className="nav-brand">Stakeholder Manager</span>
         <div className="nav-links">
           <NavLink to="/" end>Stakeholders</NavLink>
+          <NavLink to="/stakeholders/new">Add Stakeholder</NavLink>
         </div>
       </nav>
       <main className="main-content">
