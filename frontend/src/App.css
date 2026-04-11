@@ -18,6 +18,25 @@ body {
   flex:1;
 }
 
+.form-submit-wrapper {
+  align-self: end;
+  position: relative;
+}
+
+.form-submit-loading {
+  color: transparent !important;
+}
+
+.form-submit-loader {
+  z-index: 1;
+  color: white;
+  stroke-width: 5px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  animation: rotate 0.5s linear infinite;
+}
+
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
@@ -80,6 +99,12 @@ body {
   background-color: rgb(21, 38, 16);
   padding: 0.5rem 1rem;
 }
+
+.button:disabled {
+  
+  opacity: 0.75;
+}
+
 button:hover
 {
   cursor:pointer;
@@ -230,4 +255,13 @@ button:hover
   background-color: #fff5f5;
   border: 1px solid #dc3545;
   border-radius: 4px;
+}
+
+@keyframes rotate { 
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }

@@ -2,11 +2,14 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Stakeholder } from '../types/stakeholder';
 import { FormInput, FormSubmit } from '@/components/Form';
 import { stakeholderSchema } from '@/schemas/stakeholder';
+import { getEmailExists } from '@/services/stakeholderService';
 
 const StakeholderForm = () => {
-  const { register, handleSubmit, formState } = useForm<Stakeholder>();
+  const { register, handleSubmit, formState } = useForm<Stakeholder>({
+    mode: "onBlur"
+  });
 
-  const { errors } = formState;
+  const { errors, isValidating, isSubmitting } = formState;
 
   const onSubmit: SubmitHandler<Stakeholder> = (data) => {
     console.log('data', data);
@@ -43,11 +46,17 @@ const StakeholderForm = () => {
           label="Email"
           {...register('email', {
             required: 'Email is required',
-            validate: (value) => {
+            validate: async (value) => {
               const result = stakeholderSchema
                 .pick({ email: true })
                 .safeParse({ email: value });
-              return result.success || 'Invalid email address';
+              if (!result.success) {
+                return 'Invalid email address';
+              }
+              const emailExists = await getEmailExists(value);
+              if (emailExists) {
+                return 'Email already taken';
+              }
             },
           })}
           placeholder="example@gmail.com"
@@ -67,7 +76,7 @@ const StakeholderForm = () => {
           type="text"
           error={errors.organisation?.message}
         />
-        <FormSubmit value="Submit" />
+        <FormSubmit loading={isValidating || isSubmitting } disabled={isValidating || isSubmitting } />
       </form>
     </>
   );

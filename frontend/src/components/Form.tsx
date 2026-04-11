@@ -1,16 +1,22 @@
+import clsx from 'clsx';
 import { InputHTMLAttributes, forwardRef } from 'react';
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const FormRow = ({ children }: { children: React.ReactNode }) => {
   return <div className="form-row">{children}</div>;
 };
 
-const FormSubmit = (props: InputHTMLAttributes<HTMLInputElement>) => {
+const FormSubmit = ({ loading, ...props }: InputHTMLAttributes<HTMLInputElement> & { loading?: boolean }) => {
   return (
-    <input
-      type="submit"
-      className="form-submit button"
-      {...props}
+    <div className='form-submit-wrapper'>
+        {loading && <AiOutlineLoading3Quarters className='form-submit-loader' />}
+        <input
+        aria-busy={loading}
+        type="submit"
+        className={clsx("form-submit button", loading && "form-submit-loading")}
+        {...props}
     />
+    </div>
   );
 };
 
