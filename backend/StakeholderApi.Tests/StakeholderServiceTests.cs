@@ -162,6 +162,45 @@ public class StakeholderServiceTests
         Assert.Equal(stakeholder.Organisation, result.Organisation);
         Assert.Equal(stakeholder.CreatedAt, result.CreatedAt);
     }
+    
+    [Fact]
+    public async Task EmailExists_ReturnsTrue_WhenEmailExists()
+    {
+        // Arrange
+        using var context = CreateInMemoryContext(nameof(EmailExists_ReturnsTrue_WhenEmailExists));
+        var createdAt = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+        context.Stakeholders.Add(new Stakeholder
+        {
+            FirstName = "Alice",
+            LastName = "Johnson",
+            Email = "alice@example.com",
+            Organisation = "VCP",
+            Role = "Investor",
+            CreatedAt = createdAt
+        });
+        await context.SaveChangesAsync();
+        var service = new StakeholderService(context);
+        
+        // Act
+        var emailExists = await service.EmailExists("alice@example.com");
+        
+        // Assert 
+        Assert.True(emailExists);
+    }
+
+    [Fact]
+    public async Task EmailExists_ReturnsFalse_WhenEmailDoesNotExist()
+    {
+        // Arrange
+        using var context = CreateInMemoryContext(nameof(EmailExists_ReturnsTrue_WhenEmailExists));
+        var service = new StakeholderService(context);
+        
+        // Act
+        var emailExists = await service.EmailExists("alice@example.com");
+        
+        // Assert
+        Assert.False(emailExists);
+    }
 
     [Fact]
     public async Task AddStakeholderAsync_WithExistingEmail_ReturnsError()
@@ -178,7 +217,6 @@ public class StakeholderServiceTests
             Organisation = "VCP",
             CreatedAt = DateTime.UtcNow
         };
-        
         context.Stakeholders.Add(stakeholder);
         await context.SaveChangesAsync();
         

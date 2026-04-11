@@ -38,6 +38,14 @@ public class StakeholdersController : ControllerBase
     }
 
     [HttpGet]
+    [Route("email-exists")]
+    public async Task<IActionResult> EmailExists(string email)
+    {
+        var emailExists = await  _stakeholderService.EmailExists(email);
+        return Ok(emailExists);
+    }
+
+    [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         var stakeholders = await _stakeholderService.GetAllStakeholdersAsync();

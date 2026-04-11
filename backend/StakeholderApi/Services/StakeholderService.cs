@@ -34,6 +34,12 @@ public class StakeholderService : IStakeholderService
         return Result.Success(result.Entity);
     }
 
+    public async Task<bool> EmailExists(string email)
+    {
+        var result =  await _context.Stakeholders.AnyAsync(s => s.Email == email);
+        return result;  
+    }
+
     public async Task<Result> DeleteStakeholderAsync(int id)
     {
         _context.Stakeholders.Remove(new Stakeholder { Id = id });
