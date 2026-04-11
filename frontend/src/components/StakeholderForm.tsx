@@ -1,36 +1,76 @@
-import {SubmitHandler, useForm} from "react-hook-form";
-import { Stakeholder } from "../types/stakeholder";
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Stakeholder } from '../types/stakeholder';
+import { FormInput, FormSubmit } from '@/components/Form';
+import { stakeholderSchema } from '@/schemas/stakeholder';
 
-import z from "zod";
+const StakeholderForm = () => {
+  const { register, handleSubmit, formState } = useForm<Stakeholder>();
 
-const StakeholderForm = ()=> {
+  const { errors } = formState;
 
-    const {register , handleSubmit, watch, formState: {errors}} = useForm<Stakeholder>();
-    z.string().email().safeParse("").success;
+  const onSubmit: SubmitHandler<Stakeholder> = (data) => {
+    console.log('data', data);
+  };
 
-    
-    const onSubmit : SubmitHandler<Stakeholder> = data => {        console.log(data);
-    }
-    
-    return <form onSubmit={handleSubmit(onSubmit)} className="stakeholder-form">
+  return (
+    <>
+      {' '}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="stakeholder-form"
+      >
+        <FormInput
+          {...register('title')}
+          label="Title"
+          type="text"
+          error={errors.title?.message}
+        />
+        <FormInput
+          label="First Name"
+          {...register('firstName', { required: 'First name is required' })}
+          type="text"
+          error={errors.firstName?.message}
+        />
 
-        <div className="name-controls">
+        <FormInput
+          label="Last Name"
+          {...register('lastName', { required: 'Last name is required' })}
+          type="text"
+          error={errors.lastName?.message}
+        />
 
-        <div className="form-control">
-        <input
-            {...register("firstName", { required: "First name is required" , validate: async ()=> await new Promise(resolve => setTimeout(() => resolve(false), 10000))})} 
-            placeholder="First name" 
-            type="text" />
-        {errors.firstName && <span className="form-error">{errors.firstName.message}</span>}
-        </div>
-        <input {...register("lastName")} placeholder="Last name" type="text" />
-        </div>
-        <input {...register("email")} placeholder="Email" type="email" />
-        <input {...register("role")} placeholder="Role" type="text" />
-        <input {...register("organisation")} placeholder="Organisation" type="text" />
-        <input {...register("title")} placeholder="Title" type="text" />
-        <input type="submit" value="Submit" />
-    </form>
-}
+        <FormInput
+          label="Email"
+          {...register('email', {
+            required: 'Email is required',
+            validate: (value) => {
+              const result = stakeholderSchema
+                .pick({ email: true })
+                .safeParse({ email: value });
+              return result.success || 'Invalid email address';
+            },
+          })}
+          placeholder="example@gmail.com"
+          error={errors.email?.message}
+        />
+        <FormInput
+          {...register('role', { required: 'Role is required' })}
+          label="Role"
+          type="text"
+          error={errors.role?.message}
+        />
+        <FormInput
+          {...register('organisation', {
+            required: 'Organisation is required',
+          })}
+          label="Organisation"
+          type="text"
+          error={errors.organisation?.message}
+        />
+        <FormSubmit value="Submit" />
+      </form>
+    </>
+  );
+};
 
 export default StakeholderForm;
