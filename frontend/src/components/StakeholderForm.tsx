@@ -3,16 +3,24 @@ import { Stakeholder } from '../types/stakeholder';
 import { FormInput, FormSubmit } from '@/components/Form';
 import { stakeholderSchema } from '@/schemas/stakeholder';
 import { getEmailExists } from '@/services/stakeholderService';
+import { useNavigate } from 'react-router-dom';
+
+
+import { toast } from 'react-toastify';
 
 const StakeholderForm = () => {
   const { register, handleSubmit, formState } = useForm<Stakeholder>({
     mode: "onBlur"
   });
+  
+  const navigate = useNavigate();
 
   const { errors, isValidating, isSubmitting } = formState;
 
   const onSubmit: SubmitHandler<Stakeholder> = (data) => {
     console.log('data', data);
+    toast.success('Stakeholder created successfully!');
+    navigate('/');
   };
 
   return (

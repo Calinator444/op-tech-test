@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { StakeholdersPage } from './pages/StakeholdersPage';
+import { ToastContainer } from 'react-toastify';
 import './App.css';
-import StakeholdersForm from './pages/NewStakeholderPage';
 import NewStakeholdersPage from './pages/NewStakeholderPage';
 
 function App() {
@@ -20,6 +20,7 @@ function App() {
           <Route path="/stakeholders/new" element={<NewStakeholdersPage />} />
         </Routes>
       </main>
+      <ToastContainer />
     </BrowserRouter>
   );
 }
