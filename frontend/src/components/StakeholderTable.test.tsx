@@ -45,6 +45,38 @@ describe('StakeholderTable', () => {
     expect(screen.getByText('Organisation')).toBeInTheDocument();
   });
 
+  it('renders a dash for empty title', () => {
+    const stakeholdersWithEmptyTitle = [
+      {
+        id: 3,
+        firstName: 'Charlie',
+        lastName: 'Smith',
+        email: 'charlie.smith@example.com',
+        role: 'Partner',
+        organisation: 'Global Ventures',
+        createdAt: '2024-03-10T00:00:00Z',
+      },
+    ];
+    render(<StakeholderTable stakeholders={stakeholdersWithEmptyTitle} />);
+    expect(screen.getByText('-')).toBeInTheDocument();
+  });
+
+  it('render renders page count', () => {
+    const manyStakeholders = Array.from({ length: 15 }, (_, i) => ({
+      id: i + 1,
+      firstName: `First${i + 1}`,
+      lastName: `Last${i + 1}`,
+      email: `user${i + 1}@example.com`,
+      role: 'Role',
+      organisation: 'Organisation',
+      createdAt: '2024-01-01T00:00:00Z',
+    }));
+    render(<StakeholderTable stakeholders={manyStakeholders} />);
+    expect(screen.getByRole('button', { name: '1' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '2' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '3' })).toBeInTheDocument();
+  });
+
   it('displays a message when there are no stakeholders', () => {
     render(<StakeholderTable stakeholders={[]} />);
 
