@@ -1,23 +1,26 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Stakeholder } from '../types/stakeholder';
 import { FormInput, FormSubmit } from '@/components/Form';
-import { stakeholderSchema } from '@/schemas/stakeholder';
-import { createStakeholder, getEmailExists } from '@/services/stakeholderService';
+import { stakeholderFormSchema } from '@/schemas/stakeholder';
+import { createStakeholder } from '@/services/stakeholderService';
 import { useNavigate } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import z from 'zod';
 
 
 import { toast } from 'react-toastify';
 
 const StakeholderForm = () => {
-  const { register, handleSubmit, formState } = useForm<Stakeholder>({
-    mode: "onBlur"
+  const { register, handleSubmit, formState } = useForm<Omit<Stakeholder, 'id' | 'createdAt' >>({
+    mode: "onBlur",
+    resolver: zodResolver(stakeholderFormSchema),
   });
   
   const navigate = useNavigate();
 
   const { errors, isValidating, isSubmitting } = formState;
 
-  const onSubmit: SubmitHandler<Stakeholder> = async (data) => {
+  const onSubmit: SubmitHandler<Omit<Stakeholder, 'id' | 'createdAt'>> = async (data) => {
     try{
       await createStakeholder(data);
       toast.success('Stakeholder created successfully!');
@@ -42,48 +45,32 @@ const StakeholderForm = () => {
         />
         <FormInput
           label="First Name"
-          {...register('firstName', { required: 'First name is required' })}
+          {...register('firstName')}
           type="text"
           error={errors.firstName?.message}
         />
 
         <FormInput
           label="Last Name"
-          {...register('lastName', { required: 'Last name is required' })}
+          {...register('lastName')}
           type="text"
           error={errors.lastName?.message}
         />
 
         <FormInput
           label="Email"
-          {...register('email', {
-            required: 'Email is required',
-            validate: async (value) => {
-              const result = stakeholderSchema
-                .pick({ email: true })
-                .safeParse({ email: value });
-              if (!result.success) {
-                return 'Invalid email address';
-              }
-              const emailExists = await getEmailExists(value);
-              if (emailExists) {
-                return 'Email already taken';
-              }
-            },
-          })}
+          {...register('email')}
           placeholder="example@gmail.com"
           error={errors.email?.message}
         />
         <FormInput
-          {...register('role', { required: 'Role is required' })}
+          {...register('role')}
           label="Role"
           type="text"
           error={errors.role?.message}
         />
         <FormInput
-          {...register('organisation', {
-            required: 'Organisation is required',
-          })}
+          {...register('organisation')}
           label="Organisation"
           type="text"
           error={errors.organisation?.message}

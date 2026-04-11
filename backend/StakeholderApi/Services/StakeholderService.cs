@@ -23,6 +23,15 @@ public class StakeholderService : IStakeholderService
 
     public async Task<Result<Stakeholder>> AddStakeholderAsync(Stakeholder stakeholder)
     {
+        stakeholder.FirstName = stakeholder.FirstName.Trim();
+        stakeholder.LastName = stakeholder.LastName.Trim();
+        stakeholder.Email = stakeholder.Email.Trim();
+        if (stakeholder.Title != null)
+        {
+            stakeholder.Title = stakeholder.Title.Trim();
+        }
+        stakeholder.Role = stakeholder.Role.Trim();
+        stakeholder.Organisation = stakeholder.Organisation.Trim();
         var stakeholderExists = await _context.Stakeholders.AnyAsync(s => s.Email == stakeholder.Email);
         
         if (stakeholderExists)

@@ -24,6 +24,5 @@ public class StakeholderValidator : AbstractValidator<Stakeholder>
         RuleFor(x => x.LastName).NotEmpty();
         RuleFor(x => x.Role).NotEmpty();
         RuleFor(x => x.Organisation).NotEmpty();
-        RuleFor(x => x.CreatedAt).NotEmpty();
     }
 }
