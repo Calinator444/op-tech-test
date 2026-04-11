@@ -87,10 +87,6 @@ body {
   padding: 0.5rem;
 }
 
-.pagination-button.selected {
-  background-color: #e9ecef;
-}
-
 
 .button {
   color: white;
@@ -148,16 +144,48 @@ button:hover
   
 }
 
+.pagination-button.selected {
+  color: white;
+  background-color: #1a3014;
+}
+
+.pagination-button.end {
+  padding: 0.25rem 0.25rem; 
+}
 .pagination-button {
-  
   padding: 0.25rem 0.5rem; 
+    color: #333;
+      border-width: 1px;
+
+
+}
+.pagination-button:not(.selected) {
+  background-color: transparent;
+}
+
+.pagination-button.ghost {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.pagination-button.end {
+  border-color: #e9ecef;
+  border-style: solid;
+  color: #333;
+  background-color: white;
+  
+}
+
+.pagination-button.selected, .pagination-button.end { 
   border-radius: 4px;
-  border: none;
+  font-size: 0.875rem;
   border-color: #e9ecef;
   border-width: 1px;
   border-style: solid;
-  color: #333;
-  background-color: #f8f9fa;
+  /* background-color: #f8f9fa; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-brand {

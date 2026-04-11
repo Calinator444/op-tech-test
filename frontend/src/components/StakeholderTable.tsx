@@ -2,6 +2,7 @@ import React from 'react';
 import { Stakeholder } from '../types/stakeholder';
 import clsx from 'clsx';
 import { useReactTable, getCoreRowModel, createColumnHelper, flexRender, getPaginationRowModel } from '@tanstack/react-table';
+import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
 
 interface Props {
@@ -102,18 +103,24 @@ export function StakeholderTable({ stakeholders }: Props) {
     </div>
 
       <div className='pagination'>
-        <button className='pagination-button' onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}>
-          &lt;&lt;
+        <button className='pagination-button end' onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}>
+          <MdKeyboardDoubleArrowLeft />
+        </button>
+        <button className='pagination-button end' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+          <MdKeyboardArrowLeft />
         </button>
         {
           visiblePages.map(page => (
-            <button className={clsx('pagination-button', pagination.pageIndex === page - 1 && "selected" )} key={page} onClick={() => table.setPageIndex(page - 1)} disabled={pagination.pageIndex === page - 1}>
+            <button className={clsx('pagination-button ', pagination.pageIndex === page - 1 ? "selected" : "ghost" )} key={page} onClick={() => table.setPageIndex(page - 1)} disabled={pagination.pageIndex === page - 1}>
               {page}
             </button>
           ))
         }     
-        <button className='pagination-button' onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>
-          &gt;&gt;
+        <button className='pagination-button end' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+          <MdKeyboardArrowRight />  
+        </button>
+        <button className='pagination-button end' onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>
+          <MdKeyboardDoubleArrowRight />
         </button>
       </div>
     </div>
