@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { StakeholderTable } from './StakeholderTable';
 import { Stakeholder } from '../types/stakeholder';
+import { MemoryRouter } from 'react-router-dom';
+
 
 const mockStakeholders: Stakeholder[] = [
   {
@@ -28,7 +30,11 @@ const mockStakeholders: Stakeholder[] = [
 
 describe('StakeholderTable', () => {
   it('renders a row for each stakeholder', () => {
-    render(<StakeholderTable stakeholders={mockStakeholders} />);
+    render(
+    
+    <MemoryRouter>
+    <StakeholderTable stakeholders={mockStakeholders} />
+    </MemoryRouter>);
 
     expect(screen.getByText('Alice')).toBeInTheDocument();
     expect(screen.getByText('Johnson')).toBeInTheDocument();
@@ -40,7 +46,10 @@ describe('StakeholderTable', () => {
   });
 
   it('renders the correct column headers', () => {
-    render(<StakeholderTable stakeholders={mockStakeholders} />);
+    render(
+    <MemoryRouter>
+    <StakeholderTable stakeholders={mockStakeholders} />
+    </MemoryRouter>);
 
     expect(screen.getByText('First Name')).toBeInTheDocument();
     expect(screen.getByText('Last Name')).toBeInTheDocument();
@@ -62,8 +71,23 @@ describe('StakeholderTable', () => {
         createdAt: '2024-03-10T00:00:00Z',
       },
     ];
-    render(<StakeholderTable stakeholders={stakeholdersWithEmptyTitle} />);
+    render(
+    
+    
+    <MemoryRouter>
+    <StakeholderTable stakeholders={stakeholdersWithEmptyTitle} />
+    </MemoryRouter>);
     expect(screen.getByText('-')).toBeInTheDocument();
+  });
+
+  it('hides pagination controls when there are no stakeholders', () => {
+    render(
+    
+    <MemoryRouter>
+      <StakeholderTable stakeholders={[]} />
+    </MemoryRouter>);
+    
+    expect(screen.queryByText('Page Size:')).toBeNull();
   });
 
   it('render renders page count', () => {
@@ -76,20 +100,32 @@ describe('StakeholderTable', () => {
       organisation: 'Organisation',
       createdAt: '2024-01-01T00:00:00Z',
     }));
-    render(<StakeholderTable stakeholders={manyStakeholders} />);
+    render(
+    
+    <MemoryRouter>
+      <StakeholderTable stakeholders={manyStakeholders} />
+    </MemoryRouter>
+    );
     expect(screen.getByRole('button', { name: '1' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '2' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '3' })).toBeInTheDocument();
   });
 
   it('displays a message when there are no stakeholders', () => {
-    render(<StakeholderTable stakeholders={[]} />);
+    render(
+    <MemoryRouter>
+      <StakeholderTable stakeholders={[]} />
+    </MemoryRouter>);
 
     expect(screen.getByText('No stakeholders found.')).toBeInTheDocument();
   });
 
   it('does not render a table when there are no stakeholders', () => {
-    render(<StakeholderTable stakeholders={[]} />);
+    render(
+    
+    <MemoryRouter>
+    <StakeholderTable stakeholders={[]} />
+    </MemoryRouter>);
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
