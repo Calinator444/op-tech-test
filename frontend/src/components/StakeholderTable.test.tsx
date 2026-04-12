@@ -80,6 +80,26 @@ describe('StakeholderTable', () => {
     expect(screen.getByText('-')).toBeInTheDocument();
   });
 
+  it('loads pagination from query params', ()=> {
+    const stakeholders = Array.from({ length: 20 }, (_, i) => ({
+      id: i + 1,
+      firstName: `First${i + 1}`,
+      lastName: `Last${i + 1}`,
+      email: `user${i + 1}@example.com`,
+      role: 'Role',
+      organisation: 'Organisation',
+      createdAt: '2024-01-01T00:00:00Z',
+    }));
+    render(
+    <MemoryRouter initialEntries={['/?page=2&pageSize=10']}>
+      <StakeholderTable stakeholders={stakeholders} />
+    </MemoryRouter>
+    );
+
+    expect(screen.getByRole('button', { name: '2' })).toHaveClass('selected');
+    expect(screen.getByRole('combobox')).toHaveValue('10');
+  })
+
   it('hides pagination controls when there are no stakeholders', () => {
     render(
     
