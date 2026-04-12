@@ -5,7 +5,7 @@ import { render, waitFor } from '@testing-library/react';
 import { screen } from '@testing-library/react';
 import { toast } from 'react-toastify';
 import userEvent from '@testing-library/user-event';
-import { getEmailExists } from '@/services/stakeholderService';
+import { getEmailExists, createStakeholder } from '@/services/stakeholderService';
 
 vi.mock('@/services/stakeholderService', () => ({
   getEmailExists: vi.fn(),
@@ -86,4 +86,29 @@ describe('StakeholerForm', () => {
     await userEvent.tab();
     expect(screen.getByText('Email already exists')).toBeInTheDocument();
   });
+
+  it('displays an error when submission API call fails', async ()=>{
+
+    const user = userEvent.setup();
+    vi.mocked(getEmailExists).mockResolvedValue(false);
+    vi.mocked(createStakeholder).mockRejectedValue(new Error('API error'));
+    const toastSpy = vi.spyOn(toast, 'error').mockImplementation(() => 'id');
+    render(
+      <MemoryRouter>
+        <StakeholderForm />
+      </MemoryRouter>,
+    );
+    await user.type(screen.getByLabelText('First Name'), 'Test');
+    await user.type(screen.getByLabelText('Last Name'), 'User');
+    await user.type(screen.getByLabelText('Email'), 'alice@example.com');
+    await user.type(screen.getByLabelText('Role'), 'Tester');
+    await user.type(screen.getByLabelText('Organisation'), 'Testing Inc');
+    const submitButton = screen.getByRole('button');
+    submitButton.click();
+    await waitFor(() => {
+      expect(toastSpy).toHaveBeenCalledWith(
+        'Failed to create stakeholdera',
+      );
+    });
+  })
 });
