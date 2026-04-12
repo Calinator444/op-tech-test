@@ -1,9 +1,9 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { StakeholderTable } from './StakeholderTable';
 import { Stakeholder } from '../types/stakeholder';
 import { MemoryRouter } from 'react-router-dom';
-
+import { toast } from 'react-toastify';
 
 const mockStakeholders: Stakeholder[] = [
   {
@@ -100,7 +100,32 @@ describe('StakeholderTable', () => {
     expect(screen.getByRole('combobox')).toHaveValue('10');
   })
 
+  it('stakeholder table with invalid query params falls back to defaults', ()=> {
+    render(
+    <MemoryRouter initialEntries={['/?page=abc&pageSize=xyz']}>
+      <StakeholderTable stakeholders={mockStakeholders} />
+    </MemoryRouter>
+    );
+    expect(screen.getByRole('button', { name: '1' })).toHaveClass('selected');
+    expect(screen.getByRole('combobox')).toHaveValue('5');
+  });
+
+  it('stakeholder table with invalid values shows error message', async ()=> {
+    const errorSpy = vi.spyOn(toast, 'error').mockImplementation(() => "id");
+    render(
+    <MemoryRouter initialEntries={['/?page=abc&pageSize=xyz']}>
+      <StakeholderTable stakeholders={mockStakeholders} />
+    </MemoryRouter>
+    );
+    await waitFor(() => {
+    expect(errorSpy).toHaveBeenCalledWith(
+      'Invalid pagination parameters in URL. Resetting to defaults.'
+    );
+  });
+  });
+
   it('hides pagination controls when there are no stakeholders', () => {
+
     render(
     
     <MemoryRouter>
