@@ -19,15 +19,23 @@ public class StakeholderServiceTests
     }
 
     #region GetAllStakeholdersAsync
-    
+
     [Fact]
     public async Task GetAllStakeholdersAsync_ReturnsAllStakeholders()
     {
         // Arrange
         using var context = CreateInMemoryContext(nameof(GetAllStakeholdersAsync_ReturnsAllStakeholders));
         context.Stakeholders.AddRange(
-            new Stakeholder { Id = 1, FirstName = "Alice", LastName = "Johnson", Email = "alice@example.com", Role = "Investor", Organisation = "VCP", CreatedAt = DateTime.UtcNow },
-            new Stakeholder { Id = 2, FirstName = "Bob", LastName = "Williams", Email = "bob@example.com", Role = "Advisor", Organisation = "TechCorp", CreatedAt = DateTime.UtcNow }
+            new Stakeholder
+            {
+                Id = 1, FirstName = "Alice", LastName = "Johnson", Email = "alice@example.com", Role = "Investor",
+                Organisation = "VCP", CreatedAt = DateTime.UtcNow
+            },
+            new Stakeholder
+            {
+                Id = 2, FirstName = "Bob", LastName = "Williams", Email = "bob@example.com", Role = "Advisor",
+                Organisation = "TechCorp", CreatedAt = DateTime.UtcNow
+            }
         );
         await context.SaveChangesAsync();
 
@@ -79,7 +87,6 @@ public class StakeholderServiceTests
         // Assert
         Assert.Empty(result);
     }
-    
 
     [Fact]
     public async Task GetAllStakeholdersAsync_ReturnsStakeholdersOrderedByLastName()
@@ -87,9 +94,21 @@ public class StakeholderServiceTests
         // Arrange
         using var context = CreateInMemoryContext(nameof(GetAllStakeholdersAsync_ReturnsStakeholdersOrderedByLastName));
         context.Stakeholders.AddRange(
-            new Stakeholder { Id = 1, FirstName = "Carol", LastName = "Smith", Email = "carol@example.com", Role = "Partner", Organisation = "IH", CreatedAt = DateTime.UtcNow },
-            new Stakeholder { Id = 2, FirstName = "Alice", LastName = "Johnson", Email = "alice@example.com", Role = "Investor", Organisation = "VCP", CreatedAt = DateTime.UtcNow },
-            new Stakeholder { Id = 3, FirstName = "Bob", LastName = "Adams", Email = "bob@example.com", Role = "Advisor", Organisation = "TC", CreatedAt = DateTime.UtcNow }
+            new Stakeholder
+            {
+                Id = 1, FirstName = "Carol", LastName = "Smith", Email = "carol@example.com", Role = "Partner",
+                Organisation = "IH", CreatedAt = DateTime.UtcNow
+            },
+            new Stakeholder
+            {
+                Id = 2, FirstName = "Alice", LastName = "Johnson", Email = "alice@example.com", Role = "Investor",
+                Organisation = "VCP", CreatedAt = DateTime.UtcNow
+            },
+            new Stakeholder
+            {
+                Id = 3, FirstName = "Bob", LastName = "Adams", Email = "bob@example.com", Role = "Advisor",
+                Organisation = "TC", CreatedAt = DateTime.UtcNow
+            }
         );
         await context.SaveChangesAsync();
 
@@ -135,11 +154,11 @@ public class StakeholderServiceTests
         Assert.Equal("VCP", result.Organisation);
         Assert.Equal(createdAt, result.CreatedAt);
     }
-    
+
     #endregion
 
     #region AddStakeholderAsync
-    
+
     [Fact]
     public async Task AddStakeholderAsync_PersistsToDatabase()
     {
@@ -158,8 +177,7 @@ public class StakeholderServiceTests
 
         // Act
         await service.AddStakeholderAsync(stakeholder);
-        var result  = await context.Stakeholders.FirstAsync(s => s.Email == "alice@example.com");
-        
+        var result = await context.Stakeholders.FirstAsync(s => s.Email == "alice@example.com");
 
         // Assert
         Assert.Equal(stakeholder.FirstName, result.FirstName);
@@ -169,18 +187,17 @@ public class StakeholderServiceTests
         Assert.Equal(stakeholder.Organisation, result.Organisation);
         Assert.Equal(stakeholder.CreatedAt, result.CreatedAt);
     }
-    
+
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    
     public async Task AddStakeholderAsync_WithEmptyEmail_ReturnsError(string emptyString)
     {
         // Arrange 
         using var context = CreateInMemoryContext(nameof(AddStakeholderAsync_WithEmptyEmail_ReturnsError));
         var createdAt = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
         var service = new StakeholderService(context);
-        
+
         // Act
         var result = await service.AddStakeholderAsync(new Stakeholder
         {
@@ -189,20 +206,20 @@ public class StakeholderServiceTests
             LastName = emptyString,
             Email = emptyString,
             Role = emptyString,
-            Organisation =emptyString,
+            Organisation = emptyString,
             CreatedAt = createdAt
         });
-        
+
         // Assert
         Assert.True(result.IsInvalid());
         Assert.Equal(6, result.ValidationErrors.Count());
     }
-    
+
     [Fact]
     public async Task AddStakeholderAsync_WithExistingEmail_ReturnsError()
     {
         // Arrange
-        using var  context = CreateInMemoryContext(nameof(AddStakeholderAsync_WithExistingEmail_ReturnsError));
+        using var context = CreateInMemoryContext(nameof(AddStakeholderAsync_WithExistingEmail_ReturnsError));
         var service = new StakeholderService(context);
         var stakeholder = new Stakeholder
         {
@@ -215,8 +232,32 @@ public class StakeholderServiceTests
         };
         context.Stakeholders.Add(stakeholder);
         await context.SaveChangesAsync();
-        
+
         // Act 
+        var result = await service.AddStakeholderAsync(stakeholder);
+
+        // Assert
+        Assert.True(result.IsInvalid());
+    }
+
+    [Fact]
+    public async Task AddStakeholderAsync_WithInvalidEmail_ReturnsError()
+    {
+        // Arrange
+        using var context = CreateInMemoryContext(nameof(AddStakeholderAsync_TrimsInputs));
+        var service = new StakeholderService(context);
+        var stakeholder = new Stakeholder
+        {
+            Title = "Ms",
+            FirstName = "Alice",
+            LastName = "Johnson",
+            Email = "invalid-email",
+            Role = "Investor",
+            Organisation = "VCP",
+            CreatedAt = DateTime.UtcNow,
+        };
+        
+        // Act
         var result = await service.AddStakeholderAsync(stakeholder);
         
         // Assert
@@ -224,11 +265,10 @@ public class StakeholderServiceTests
     }
 
     [Fact]
-
     public async Task AddStakeholderAsync_TrimsInputs()
     {
         // Arrange
-        using var  context = CreateInMemoryContext(nameof(AddStakeholderAsync_WithExistingEmail_ReturnsError));
+        using var context = CreateInMemoryContext(nameof(AddStakeholderAsync_TrimsInputs));
         var createdAt = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
         var service = new StakeholderService(context);
         var stakeholder = new Stakeholder
@@ -241,24 +281,24 @@ public class StakeholderServiceTests
             Role = " Investor ",
             CreatedAt = createdAt
         };
-        
+
         // Act 
         var result = await service.AddStakeholderAsync(stakeholder);
         var value = result.Value;
-        
+
         // Assert
         Assert.Equal("Ms", value.Title);
         Assert.Equal("Alice", value.FirstName);
         Assert.Equal("Johnson", value.LastName);
-        Assert.Equal("alice@example.com",  value.Email);
+        Assert.Equal("alice@example.com", value.Email);
         Assert.Equal("Investor", value.Role);
         Assert.Equal("VCP", value.Organisation);
     }
-        
+
     #endregion
 
     #region EmailExists
-    
+
     [Fact]
     public async Task EmailExists_ReturnsTrue_WhenEmailExists()
     {
@@ -276,10 +316,10 @@ public class StakeholderServiceTests
         });
         await context.SaveChangesAsync();
         var service = new StakeholderService(context);
-        
+
         // Act
         var emailExists = await service.EmailExists("alice@example.com");
-        
+
         // Assert 
         Assert.True(emailExists);
     }
@@ -290,12 +330,13 @@ public class StakeholderServiceTests
         // Arrange
         using var context = CreateInMemoryContext(nameof(EmailExists_ReturnsTrue_WhenEmailExists));
         var service = new StakeholderService(context);
-        
+
         // Act
         var emailExists = await service.EmailExists("alice@example.com");
-        
+
         // Assert
         Assert.False(emailExists);
     }
+
     #endregion
 }
