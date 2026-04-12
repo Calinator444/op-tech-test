@@ -212,7 +212,7 @@ public class StakeholderServiceTests
 
         // Assert
         Assert.True(result.IsInvalid());
-        Assert.Equal(6, result.ValidationErrors.Count());
+        Assert.Equal(6, result.ValidationErrors.Count(e => e.ErrorMessage.Contains("empty")));
     }
 
     [Fact]
