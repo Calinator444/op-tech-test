@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 const mockStakeholders: Stakeholder[] = [
   {
     id: 1,
-    title: "Mrs",
+    title: 'Mrs',
     firstName: 'Alice',
     lastName: 'Johnson',
     email: 'alice@example.com',
@@ -18,7 +18,7 @@ const mockStakeholders: Stakeholder[] = [
   },
   {
     id: 2,
-    title: "Mr",
+    title: 'Mr',
     firstName: 'Bob',
     lastName: 'Williams',
     email: 'bob@example.com',
@@ -31,10 +31,10 @@ const mockStakeholders: Stakeholder[] = [
 describe('StakeholderTable', () => {
   it('renders a row for each stakeholder', () => {
     render(
-    
-    <MemoryRouter>
-    <StakeholderTable stakeholders={mockStakeholders} />
-    </MemoryRouter>);
+      <MemoryRouter>
+        <StakeholderTable stakeholders={mockStakeholders} />
+      </MemoryRouter>,
+    );
 
     expect(screen.getByText('Alice')).toBeInTheDocument();
     expect(screen.getByText('Johnson')).toBeInTheDocument();
@@ -47,9 +47,10 @@ describe('StakeholderTable', () => {
 
   it('renders the correct column headers', () => {
     render(
-    <MemoryRouter>
-    <StakeholderTable stakeholders={mockStakeholders} />
-    </MemoryRouter>);
+      <MemoryRouter>
+        <StakeholderTable stakeholders={mockStakeholders} />
+      </MemoryRouter>,
+    );
 
     expect(screen.getByText('First Name')).toBeInTheDocument();
     expect(screen.getByText('Last Name')).toBeInTheDocument();
@@ -72,15 +73,14 @@ describe('StakeholderTable', () => {
       },
     ];
     render(
-    
-    
-    <MemoryRouter>
-    <StakeholderTable stakeholders={stakeholdersWithEmptyTitle} />
-    </MemoryRouter>);
+      <MemoryRouter>
+        <StakeholderTable stakeholders={stakeholdersWithEmptyTitle} />
+      </MemoryRouter>,
+    );
     expect(screen.getByText('-')).toBeInTheDocument();
   });
 
-  it('loads pagination from query params', ()=> {
+  it('loads pagination from query params', () => {
     const stakeholders = Array.from({ length: 20 }, (_, i) => ({
       id: i + 1,
       firstName: `First${i + 1}`,
@@ -91,47 +91,46 @@ describe('StakeholderTable', () => {
       createdAt: '2024-01-01T00:00:00Z',
     }));
     render(
-    <MemoryRouter initialEntries={['/?page=2&pageSize=10']}>
-      <StakeholderTable stakeholders={stakeholders} />
-    </MemoryRouter>
+      <MemoryRouter initialEntries={['/?page=2&pageSize=10']}>
+        <StakeholderTable stakeholders={stakeholders} />
+      </MemoryRouter>,
     );
 
     expect(screen.getByRole('button', { name: '2' })).toHaveClass('selected');
     expect(screen.getByRole('combobox')).toHaveValue('10');
-  })
+  });
 
-  it('stakeholder table with invalid query params falls back to defaults', ()=> {
+  it('stakeholder table with invalid query params falls back to defaults', () => {
     render(
-    <MemoryRouter initialEntries={['/?page=abc&pageSize=xyz']}>
-      <StakeholderTable stakeholders={mockStakeholders} />
-    </MemoryRouter>
+      <MemoryRouter initialEntries={['/?page=abc&pageSize=xyz']}>
+        <StakeholderTable stakeholders={mockStakeholders} />
+      </MemoryRouter>,
     );
     expect(screen.getByRole('button', { name: '1' })).toHaveClass('selected');
     expect(screen.getByRole('combobox')).toHaveValue('5');
   });
 
-  it('stakeholder table with invalid values shows error message', async ()=> {
-    const errorSpy = vi.spyOn(toast, 'error').mockImplementation(() => "id");
+  it('stakeholder table with invalid values shows error message', async () => {
+    const errorSpy = vi.spyOn(toast, 'error').mockImplementation(() => 'id');
     render(
-    <MemoryRouter initialEntries={['/?page=abc&pageSize=xyz']}>
-      <StakeholderTable stakeholders={mockStakeholders} />
-    </MemoryRouter>
+      <MemoryRouter initialEntries={['/?page=abc&pageSize=xyz']}>
+        <StakeholderTable stakeholders={mockStakeholders} />
+      </MemoryRouter>,
     );
     await waitFor(() => {
-    expect(errorSpy).toHaveBeenCalledWith(
-      'Invalid pagination parameters in URL. Resetting to defaults.'
-    );
-  });
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Invalid pagination parameters in URL. Resetting to defaults.',
+      );
+    });
   });
 
   it('hides pagination controls when there are no stakeholders', () => {
-
     render(
-    
-    <MemoryRouter>
-      <StakeholderTable stakeholders={[]} />
-    </MemoryRouter>);
-    
+      <MemoryRouter>
+        <StakeholderTable stakeholders={[]} />
+      </MemoryRouter>,
+    );
+
     expect(screen.queryByText('Page Size:')).toBeNull();
   });
 
@@ -146,10 +145,9 @@ describe('StakeholderTable', () => {
       createdAt: '2024-01-01T00:00:00Z',
     }));
     render(
-    
-    <MemoryRouter>
-      <StakeholderTable stakeholders={manyStakeholders} />
-    </MemoryRouter>
+      <MemoryRouter>
+        <StakeholderTable stakeholders={manyStakeholders} />
+      </MemoryRouter>,
     );
     expect(screen.getByRole('button', { name: '1' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '2' })).toBeInTheDocument();
@@ -158,19 +156,20 @@ describe('StakeholderTable', () => {
 
   it('displays a message when there are no stakeholders', () => {
     render(
-    <MemoryRouter>
-      <StakeholderTable stakeholders={[]} />
-    </MemoryRouter>);
+      <MemoryRouter>
+        <StakeholderTable stakeholders={[]} />
+      </MemoryRouter>,
+    );
 
     expect(screen.getByText('No stakeholders found.')).toBeInTheDocument();
   });
 
   it('does not render a table when there are no stakeholders', () => {
     render(
-    
-    <MemoryRouter>
-    <StakeholderTable stakeholders={[]} />
-    </MemoryRouter>);
+      <MemoryRouter>
+        <StakeholderTable stakeholders={[]} />
+      </MemoryRouter>,
+    );
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
