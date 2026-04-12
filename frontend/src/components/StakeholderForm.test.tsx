@@ -3,14 +3,12 @@ import StakeholderForm from "./StakeholderForm";
 import { MemoryRouter } from "react-router-dom";
 import { render, waitFor, queryByAttribute } from "@testing-library/react";
 import { screen } from "@testing-library/react";
-import { act } from "react";
 import {toast } from 'react-toastify';
-import { wait } from "@testing-library/user-event/dist/cjs/utils/index.js";
-import * as StakeholderService from "@/services/stakeholderService";
-import { getEmailExists } from "@/services/stakeholderService";
 import userEvent from '@testing-library/user-event';                                                    
 
-
+afterAll(() => {
+    vi.restoreAllMocks();
+});
 describe('StakeholerForm', () => {
     it('renders form fields correctly', () => {
         const result = render(
@@ -45,12 +43,12 @@ describe('StakeholerForm', () => {
     it('displays a success toast on successful submission', async () => {
 
         const user = userEvent.setup();
-        vi.spyOn(StakeholderService, 'getEmailExists').mockImplementation(() => {
-            return Promise.resolve(false);
-        });
-        vi.spyOn(StakeholderService, 'createStakeholder').mockImplementation(() => {
-            return Promise.resolve(undefined);
-        });
+
+        vi.mock('@/services/stakeholderService', () => ({                                               
+          getEmailExists: vi.fn(() => Promise.resolve(false)),                                        
+          createStakeholder: vi.fn(() => Promise.resolve(undefined)),                                 
+        }));
+
         const toastSpy = vi.spyOn(toast, 'success').mockImplementation(() => "id");
         render(
         <MemoryRouter>
