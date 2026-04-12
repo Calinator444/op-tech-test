@@ -134,7 +134,7 @@ describe('StakeholderTable', () => {
     expect(screen.queryByText('Page Size:')).toBeNull();
   });
 
-  it('render renders page count', () => {
+  it('renders page count', () => {
     const manyStakeholders = Array.from({ length: 15 }, (_, i) => ({
       id: i + 1,
       firstName: `First${i + 1}`,
