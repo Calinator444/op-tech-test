@@ -139,9 +139,7 @@ public class StakeholderServiceTests
     #endregion
 
     #region AddStakeholderAsync
-
     
-
     [Fact]
     public async Task AddStakeholderAsync_PersistsToDatabase()
     {
@@ -171,8 +169,7 @@ public class StakeholderServiceTests
         Assert.Equal(stakeholder.Organisation, result.Organisation);
         Assert.Equal(stakeholder.CreatedAt, result.CreatedAt);
     }
-
-
+    
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
