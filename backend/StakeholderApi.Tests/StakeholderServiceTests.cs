@@ -222,6 +222,39 @@ public class StakeholderServiceTests
         // Assert
         Assert.True(result.IsInvalid());
     }
+
+    [Fact]
+
+    public async Task AddStakeholderAsync_TrimsInputs()
+    {
+        // Arrange
+        using var  context = CreateInMemoryContext(nameof(AddStakeholderAsync_WithExistingEmail_ReturnsError));
+        var createdAt = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+        var service = new StakeholderService(context);
+        var stakeholder = new Stakeholder
+        {
+            Title = " Ms ",
+            FirstName = " Alice ",
+            LastName = " Johnson ",
+            Email = " alice@example.com ",
+            Organisation = " VCP ",
+            Role = " Investor ",
+            CreatedAt = createdAt
+        };
+        
+        // Act 
+        var result = await service.AddStakeholderAsync(stakeholder);
+        var value = result.Value;
+        
+        // Assert
+        Assert.Equal("Ms", value.Title);
+        Assert.Equal("Alice", value.FirstName);
+        Assert.Equal("Johnson", value.LastName);
+        Assert.Equal("alice@example.com",  value.Email);
+        Assert.Equal("Investor", value.Role);
+        Assert.Equal("VCP", value.Organisation);
+    }
+        
     #endregion
 
     #region EmailExists
