@@ -107,8 +107,44 @@ describe('StakeholerForm', () => {
     submitButton.click();
     await waitFor(() => {
       expect(toastSpy).toHaveBeenCalledWith(
-        'Failed to create stakeholdera',
+        'Failed to create stakeholder',
       );
     });
   })
+
+  it('Button loads during form submission', async ()=>{
+
+    const user = userEvent.setup();
+    vi.mocked(getEmailExists).mockResolvedValue(false);
+    vi.mocked(createStakeholder).mockImplementation(() => new Promise(resolve => setTimeout(resolve, 1000)));
+    render(
+      <MemoryRouter>
+        <StakeholderForm />
+      </MemoryRouter>,
+    );
+    await user.type(screen.getByLabelText('First Name'), 'Test');
+    await user.type(screen.getByLabelText('Last Name'), 'User');
+    await user.type(screen.getByLabelText('Email'), 'alice@example.com');
+    await user.type(screen.getByLabelText('Role'), 'Tester');
+    await user.type(screen.getByLabelText('Organisation'), 'Testing Inc');
+    const submitButton = screen.getByRole('button');
+    submitButton.click();
+    await waitFor(() => {
+        expect(submitButton).toHaveAttribute('aria-busy', 'true');
+    });
+  })
+
+  it('Button loads during email validation', async ()=>{
+    const user = userEvent.setup();
+    vi.mocked(getEmailExists).mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(false), 1000)));
+    render(
+      <MemoryRouter>
+        <StakeholderForm />
+      </MemoryRouter>,
+    );
+    await user.type(screen.getByLabelText('Email'), 'alice@example.com');
+    await user.tab();
+    const submitButton = screen.getByRole('button');
+    expect(submitButton).toHaveAttribute('aria-busy', 'true');
+  });
 });
