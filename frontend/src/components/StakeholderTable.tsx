@@ -72,7 +72,7 @@ export function StakeholderTable({ stakeholders }: Props) {
     
 
     return { pageIndex: result.data.page - 1, pageSize: result.data.pageSize, error: result.error };
-  }, [searchParams]);
+  }, [searchParams, stakeholders.length]);
 
   useEffect(()=> {
     if (error) {
@@ -82,6 +82,7 @@ export function StakeholderTable({ stakeholders }: Props) {
 
   const table = useReactTable({
     data: stakeholders,
+    autoResetPageIndex: false,
     columns,
     getCoreRowModel: getCoreRowModel(),
     
