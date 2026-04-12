@@ -13,6 +13,10 @@ interface Props {
 const columnHelper = createColumnHelper<Stakeholder>();
 
 const columns = [
+    columnHelper.accessor("title", {
+    header: "Title",
+    cell: (info) => info.getValue() || "-"
+  }),
   columnHelper.accessor("firstName", {
     header: "First Name",
   }),
@@ -28,11 +32,7 @@ const columns = [
   columnHelper.accessor("organisation", {
     header: "Organisation",
   }),
-  columnHelper.accessor("title", {
-    header: "Title",
-  
-    cell: (info) => info.getValue() || "-"
-  }),
+
 ];
 
 const DEFAULT_PAGE_INDEX = 0;
