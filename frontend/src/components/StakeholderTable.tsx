@@ -1,10 +1,11 @@
 import { useEffect, useMemo } from 'react';
 import { Stakeholder } from '../types/stakeholder';
 import { useReactTable, getCoreRowModel, createColumnHelper, flexRender, getPaginationRowModel } from '@tanstack/react-table';
-import { PaginationContainer, PaginationSelector, PaginationGroup, PaginationButton, PaginationEnd, PaginationStart, PaginationNext, PaginationPrevious } from './Pagination';
+import {  PaginationSelector, PaginationGroup, PaginationButton, PaginationEnd, PaginationStart, PaginationNext, PaginationPrevious } from './Pagination';
 import { useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { toast } from 'react-toastify';
+import getPaginationBreadcrumbs from '@/services/paginationService';
 interface Props {
   stakeholders: Stakeholder[];
 }
@@ -124,17 +125,14 @@ export function StakeholderTable({ stakeholders }: Props) {
 
   const totalPages = table.getPageCount();
 
-  const { pagination } = table.getState();
-  const current = pagination.pageIndex;
+  const pagination = table.getState().pagination;
 
-  const start = Math.min(
-    Math.max(current - 1, 0),
-    Math.max(totalPages - 3, 0)
-  );
-
-  const visiblePages = Array.from({ length: Math.min(3, totalPages) }, (_, i) => start + i + 1);
-
-
+  const visiblePages = getPaginationBreadcrumbs({
+    currentIndex: pagination.pageIndex,
+    totalPages,
+    windowSize: 3,
+  });
+  
   return (
     <>
     <table className="stakeholder-table">
@@ -154,9 +152,10 @@ export function StakeholderTable({ stakeholders }: Props) {
         ))} 
       </tbody>
     </table>
-    <PaginationContainer>
+    <div className='pagination-container'> 
       <PaginationSelector value={pagination.pageSize} options={PAGE_SIZE_OPTIONS} onChange={(e) => {
         table.setPageSize(Number(e.target.value))}} />
+      <div className='page-count'>Page {pagination.pageIndex + 1} of {totalPages}</div>
       <PaginationGroup>
         <PaginationStart onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()} />
         <PaginationPrevious onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}/>
@@ -168,7 +167,7 @@ export function StakeholderTable({ stakeholders }: Props) {
         <PaginationNext onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}/>
         <PaginationEnd onClick={() => table.lastPage()} disabled={!table.getCanNextPage()} />
       </PaginationGroup>
-    </PaginationContainer>
+    </div>
     </>
   );
 }

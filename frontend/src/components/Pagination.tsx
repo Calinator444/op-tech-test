@@ -2,10 +2,6 @@ import React from 'react';
 import clsx from 'clsx';
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md';
 
-export function PaginationContainer({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={clsx('pagination-container', className)} {...props}>{children}</div>;
-}
-
 interface PaginationSelectorProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   value: number;
   options: number[];

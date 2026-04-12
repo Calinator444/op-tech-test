@@ -19,6 +19,7 @@ body {
 }
 
 .form-submit-wrapper {
+  margin-top: 1rem;
   align-self: end;
   position: relative;
 }
@@ -76,13 +77,18 @@ body {
   display: flex;
   flex-direction: row;
   gap: 0.25rem;
-  margin-left: auto;
+}
+
+.page-count, .pagination-selector { 
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .pagination-container {
   margin-top: 1.5rem;
   width:100%;
   align-items: center;
+  justify-content: space-between;
   display : flex;
   flex-direction: row;
   padding: 0.5rem;
@@ -119,11 +125,12 @@ button:hover
 }
 
 .stakeholder-form { 
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   background-color: #f8f9fa;
   justify-self: center;
   min-width: 22.5rem;
   padding: 2.5rem 2.5rem;
-  border: 1px solid #e9ecef;
+  
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -132,7 +139,7 @@ button:hover
 
 
 .stakeholder-form > input[type="submit"] {
-
+  
   align-self: end;
   justify-self: end;
 }
