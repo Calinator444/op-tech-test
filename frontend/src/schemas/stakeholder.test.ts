@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { stakeholderFormSchema } from "./stakeholder";
 
 vi.mock('@/services/stakeholderService', () => ({
-  getEmailExists: (email: string) => {
+  getEmailExists: (_: string) => {
         return Promise.resolve(true);
     },
 }));
