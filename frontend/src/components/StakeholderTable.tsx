@@ -155,7 +155,8 @@ export function StakeholderTable({ stakeholders }: Props) {
       </tbody>
     </table>
     <PaginationContainer>
-      <PaginationSelector value={pagination.pageSize} options={PAGE_SIZE_OPTIONS} onChange={(size: number) => table.setPageSize(size)} />
+      <PaginationSelector value={pagination.pageSize} options={PAGE_SIZE_OPTIONS} onChange={(e) => {
+        table.setPageSize(Number(e.target.value))}} />
       <PaginationGroup>
         <PaginationStart onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()} />
         <PaginationPrevious onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}/>
