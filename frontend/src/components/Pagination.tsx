@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdOutlineKeyboardDoubleArrowLeft } from 'react-icons/md';
+import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md';
 
 interface PaginationContainerProps {
   children: React.ReactNode;
@@ -39,17 +39,21 @@ export function PaginationGroup({ children }: PaginationGroupProps) {
   return <div className="pagination">{children}</div>;
 }
 
+type PaginationVariant = 'selected' | 'ghost';
+
 interface PaginationButtonProps {
   onClick: () => void;
   disabled?: boolean;
-  selected?: boolean;
+  className?: string;
+  variant?: PaginationVariant;
   children: React.ReactNode;
 }
 
-export function PaginationButton({ onClick, disabled, selected, children }: PaginationButtonProps) {
+export function PaginationButton({ onClick, className, disabled, variant = 'ghost', children }: PaginationButtonProps) {
+
   return (
     <button
-      className={clsx('pagination-button', selected ? 'selected' : 'ghost')}
+      className={clsx('pagination-button', variant, className)}
       onClick={onClick}
       disabled={disabled}
     >
@@ -58,39 +62,39 @@ export function PaginationButton({ onClick, disabled, selected, children }: Pagi
   );
 }
 
-interface PaginationEndProps {
+interface PaginationNavProps {
   onClick: () => void;
   disabled?: boolean;
 }
 
-export function PaginationEnd({ onClick, disabled }: PaginationEndProps) {
+export function PaginationEnd({ onClick, disabled }: PaginationNavProps) {
   return (
-    <button className="pagination-button end" onClick={onClick} disabled={disabled}>
-          <MdKeyboardDoubleArrowRight />
-    </button>
+    <PaginationButton onClick={onClick} disabled={disabled} className="end">
+      <MdKeyboardDoubleArrowRight />
+    </PaginationButton>
   );
 }
 
-export function PaginationNext ({ onClick, disabled }: PaginationEndProps) {
+export function PaginationStart({ onClick, disabled }: PaginationNavProps) {
   return (
-    <button className="pagination-button end" onClick={onClick} disabled={disabled}>
-          <MdOutlineKeyboardArrowRight />
-    </button>
+    <PaginationButton onClick={onClick} disabled={disabled} className="end">
+      <MdKeyboardDoubleArrowLeft />
+    </PaginationButton>
   );
 }
 
-export function PaginationPrevious ({ onClick, disabled }: PaginationEndProps) {
+export function PaginationNext({ onClick, disabled }: PaginationNavProps) {
   return (
-    <button className="pagination-button end" onClick={onClick} disabled={disabled}>
-          <MdOutlineKeyboardArrowLeft />
-    </button>
+    <PaginationButton onClick={onClick} disabled={disabled} className="end">
+      <MdOutlineKeyboardArrowRight />
+    </PaginationButton>
   );
 }
 
-export function PaginationStart({ onClick, disabled }: PaginationEndProps) {
+export function PaginationPrevious({ onClick, disabled }: PaginationNavProps) {
   return (
-    <button className="pagination-button end" onClick={onClick} disabled={disabled}>
-          <MdKeyboardDoubleArrowLeft />
-    </button>
+    <PaginationButton onClick={onClick} disabled={disabled} className="end">
+      <MdOutlineKeyboardArrowLeft />
+    </PaginationButton>
   );
 }

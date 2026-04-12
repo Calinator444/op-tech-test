@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Stakeholder } from '../types/stakeholder';
-import clsx from 'clsx';
 import { useReactTable, getCoreRowModel, createColumnHelper, flexRender, getPaginationRowModel } from '@tanstack/react-table';
-import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import { PaginationContainer, PaginationSelector, PaginationGroup, PaginationButton, PaginationEnd, PaginationStart, PaginationNext, PaginationPrevious } from './Pagination';
 import { useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { toast } from 'react-toastify';
@@ -155,42 +154,20 @@ export function StakeholderTable({ stakeholders }: Props) {
         ))} 
       </tbody>
     </table>
-    <div className='pagination-container'>
-
-    <div className='pagination-selector'>
-      Page Size:
-      <select className='select' value={pagination.pageSize} onChange={(e) => table.setPageSize(Number(e.target.value))}>
-
-        {PAGE_SIZE_OPTIONS.map((size, index) => (
-          <option key={index} value={size}>
-            {size}
-          </option>
+    <PaginationContainer>
+      <PaginationSelector value={pagination.pageSize} options={PAGE_SIZE_OPTIONS} onChange={(size: number) => table.setPageSize(size)} />
+      <PaginationGroup>
+        <PaginationStart onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()} />
+        <PaginationPrevious onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}/>
+        {visiblePages.map(page => (
+          <PaginationButton key={page} onClick={() => table.setPageIndex(page - 1)} disabled={pagination.pageIndex === page - 1} variant={pagination.pageIndex === page - 1 ? 'selected' : 'ghost'}>
+            {page}
+          </PaginationButton>
         ))}
-      </select>
-    </div>
-
-      <div className='pagination'>
-        <button className='pagination-button end' onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}>
-          <MdKeyboardDoubleArrowLeft />
-        </button>
-        <button className='pagination-button end' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-          <MdKeyboardArrowLeft />
-        </button>
-        {
-          visiblePages.map(page => (
-            <button className={clsx('pagination-button ', pagination.pageIndex === page - 1 ? "selected" : "ghost" )} key={page} onClick={() => table.setPageIndex(page - 1)} disabled={pagination.pageIndex === page - 1}>
-              {page}
-            </button>
-          ))
-        }     
-        <button className='pagination-button end' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-          <MdKeyboardArrowRight />  
-        </button>
-        <button className='pagination-button end' onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>
-          <MdKeyboardDoubleArrowRight />
-        </button>
-      </div>
-    </div>
+        <PaginationNext onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}/>
+        <PaginationEnd onClick={() => table.lastPage()} disabled={!table.getCanNextPage()} />
+      </PaginationGroup>
+    </PaginationContainer>
     </>
   );
 }
