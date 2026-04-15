@@ -14,7 +14,7 @@ export const stakeholderSchema = z.object({
 
 export const stakeholderArraySchema = z.array(stakeholderSchema);
 
-export const stakeholderFormSchema = z.object({
+export const formStakeholder = z.object({
   title: z.string().trim().transform((val)=> val ? val : undefined).optional(),
   firstName: z.string().trim().nonempty("First name is required").min(1, 'First name is required'),
   lastName: z.string().trim().nonempty("Last name is required").min(1, 'Last name is required'),

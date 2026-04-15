@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { stakeholderFormSchema } from "./stakeholder";
+import { formStakeholder } from "./stakeholder";
 
 vi.mock('@/services/stakeholderService', () => ({
   getEmailExists: (_: string) => {
@@ -18,7 +18,7 @@ describe('Stakeholder Form schema', () => {
       organisation: "Tech Company",
     };
 
-    const result = await stakeholderFormSchema.safeParseAsync(validStakeholder);
+    const result = await formStakeholder.safeParseAsync(validStakeholder);
     expect(result.data?.title).toBeUndefined();
   });
 
@@ -33,7 +33,7 @@ describe('Stakeholder Form schema', () => {
             organisation: "",
         };
     
-        const result = await stakeholderFormSchema.safeParseAsync(invalidStakeholder);
+        const result = await formStakeholder.safeParseAsync(invalidStakeholder);
         const errorPaths = result.error?.errors.map((error) => error.path.join('.'));
         expect(errorPaths).toContain('firstName');
         expect(errorPaths).toContain('lastName');

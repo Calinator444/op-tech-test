@@ -1,27 +1,24 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Stakeholder } from '../types/stakeholder';
+import { FormStakeholder } from '../types/stakeholder';
 import { FormInput, FormSubmit } from '@/components/Form';
-import { stakeholderFormSchema } from '@/schemas/stakeholder';
+import { formStakeholder } from '@/schemas/stakeholder';
 import { createStakeholder } from '@/services/stakeholderService';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import z from 'zod';
-
-
 import { toast } from 'react-toastify';
 
 const StakeholderForm = () => {
-  const { register, handleSubmit, formState } = useForm<Omit<Stakeholder, 'id' | 'createdAt' >>({
-    mode: "onBlur",
-    resolver: zodResolver(stakeholderFormSchema),
+  const { register, handleSubmit, formState } = useForm<FormStakeholder>({
+    mode: 'onBlur',
+    resolver: zodResolver(formStakeholder),
   });
-  
+
   const navigate = useNavigate();
 
   const { errors, isValidating, isSubmitting } = formState;
 
-  const onSubmit: SubmitHandler<Omit<Stakeholder, 'id' | 'createdAt'>> = async (data) => {
-    try{
+  const onSubmit: SubmitHandler<FormStakeholder> = async (data) => {
+    try {
       await createStakeholder(data);
       toast.success('Stakeholder created successfully!');
       navigate('/');
@@ -75,7 +72,10 @@ const StakeholderForm = () => {
           type="text"
           error={errors.organisation?.message}
         />
-        <FormSubmit loading={isValidating || isSubmitting } disabled={isValidating || isSubmitting } />
+        <FormSubmit
+          loading={isValidating || isSubmitting}
+          disabled={isValidating || isSubmitting}
+        />
       </form>
     </>
   );
