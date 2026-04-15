@@ -189,6 +189,24 @@ describe('StakeholderTable', () => {
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
+
+  it('displays correct page when page size division has remainders', ()=> {
+
+      const manyStakeholders = generateStakeholders(12);
+      render(
+        <MemoryRouter initialEntries={['/?page=2&pageSize=5']}>
+          <StakeholderTable stakeholders={manyStakeholders} />
+        </MemoryRouter>,
+      );
+
+      screen.getAllByRole('button');
+
+      const paginationButtons = screen.getAllByRole('button').filter(button => { 
+        // non-pagination buttons do not have numeric text content, so filter those out
+        return (Number(button.textContent) !== 0);
+      });
+      expect(paginationButtons).toHaveLength(3);
+  });
 });
 
 const generateStakeholders = (count: number): Stakeholder[] => {
