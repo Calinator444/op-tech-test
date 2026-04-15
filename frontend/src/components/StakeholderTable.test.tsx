@@ -81,15 +81,7 @@ describe('StakeholderTable', () => {
   });
 
   it('loads pagination from query params', () => {
-    const stakeholders = Array.from({ length: 20 }, (_, i) => ({
-      id: i + 1,
-      firstName: `First${i + 1}`,
-      lastName: `Last${i + 1}`,
-      email: `user${i + 1}@example.com`,
-      role: 'Role',
-      organisation: 'Organisation',
-      createdAt: '2024-01-01T00:00:00Z',
-    }));
+    const stakeholders = generateStakeholders(15);
     render(
       <MemoryRouter initialEntries={['/?page=2&pageSize=10']}>
         <StakeholderTable stakeholders={stakeholders} />
@@ -164,6 +156,30 @@ describe('StakeholderTable', () => {
     expect(screen.getByText('No stakeholders found.')).toBeInTheDocument();
   });
 
+
+  it('highlights the last page breadcrumb on the last page', ()=> {
+    const manyStakeholders = generateStakeholders(15);
+
+    render(
+      <MemoryRouter initialEntries={['/?page=3&pageSize=5']}>
+        <StakeholderTable stakeholders={manyStakeholders} />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('selected');
+  });
+
+  it('highlights first page breadcrumb on the first page', ()=> {
+    const manyStakeholders = generateStakeholders(15);
+    
+    render(
+      <MemoryRouter initialEntries={['/?page=1&pageSize=5']}>
+        <StakeholderTable stakeholders={manyStakeholders} />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('button', { name: '1' })).toHaveClass('selected');
+  }
+);
+
   it('does not render a table when there are no stakeholders', () => {
     render(
       <MemoryRouter>
@@ -174,3 +190,16 @@ describe('StakeholderTable', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
 });
+
+const generateStakeholders = (count: number): Stakeholder[] => {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i + 1,
+    firstName: `First${i + 1}`,
+    lastName: `Last${i + 1}`,
+    email: `user${i + 1}@example.com`,
+    role: 'Role',
+    organisation: 'Organisation',
+    createdAt: '2024-01-01T00:00:00Z',
+  }));
+};
+
